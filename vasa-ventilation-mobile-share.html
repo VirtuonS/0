@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vasa Ventilation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* General Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        header h1 {
+            font-weight: 700;
+            color: #000;
+        }
+
+        form {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+
+        input:focus {
+            border-color: #000;
+            outline: none;
+        }
+
+        button {
+            display: inline-block;
+            background: #000;
+            color: #fff;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #333;
+        }
+
+        #result-container {
+            margin-top: 20px;
+            display: none;
+        }
+
+        #result {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            white-space: pre-line;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        .copy-btn,
+        .share-btn {
+            margin-top: 10px;
+            background: #555;
+        }
+
+        .copy-btn:hover,
+        .share-btn:hover {
+            background: #777;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+
+            form {
+                padding: 15px;
+            }
+
+            button {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Vasa Ventilation</h1>
+        </header>
+
+        <form>
+            <div class="form-group">
+                <input type="text" id="kundensNamn" placeholder="Kundens namn" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="paket" placeholder="Paket som bokats" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="pris" placeholder="Pris (kr)" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="date" id="datum" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="tid" placeholder="Tid (24h-format)" maxlength="5" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="adress" placeholder="Adress och ort" required>
+            </div>
+            
+            <div class="form-group">
+                <input type="text" id="saljarensNamn" placeholder="Säljarens namn" required>
+            </div>
+            
+            <button type="button" onclick="generateEmail()">Generera e-post</button>
+        </form>
+
+        <div id="result-container">
+            <h2>Genererad e-post:</h2>
+            <div id="result"></div>
+            <button class="copy-btn" onclick="copyToClipboard()">Kopiera till urklipp</button>
+            <button class="share-btn" onclick="shareEmail()">Dela med kollega</button>
+        </div>
+    </div>
+
+    <script>
+        function generateEmail() {
+            const kundensNamn = document.getElementById('kundensNamn').value || '[Kundens namn]';
+            const paket = document.getElementById('paket').value || '[Paketet som bokats]';
+            const pris = document.getElementById('pris').value || '[Pris]';
+            const datum = document.getElementById('datum').value || '[Datum]';
+            const tid = document.getElementById('tid').value || '[Tid]';
+            const adress = document.getElementById('adress').value || '[Adress och ort]';
+            const saljarensNamn = document.getElementById('saljarensNamn').value || '[Säljarens namn]';
+            
+            const emailTemplate = `Hej ${kundensNamn},
+
+Härmed bekräftar vi följande uppgifter för din bokning hos Vasa Ventilation MHJ AB:
+
+Service:
+${paket}
+
+Betalning:
+${pris} kr inkl. moms (efter ROT-avdrag)
+
+Tid och plats:
+${datum} kl. ${tid}
+${adress}
+
+Vid utförande:
+• Före- och efterbilder dokumenteras
+• Ett fackmannamässigt, treårigt intyg utfärdas vid arbetsavslut.
+
+Avbokning:
+Meddelas senast 24 timmar före bokad tid för att undvika framkörningsavgift.
+
+Kontakt:
+0709-94 39 54
+vasaventilation.se
+
+Med vänlig hälsning,
+${saljarensNamn}
+Vasa Ventilation MHJ AB`;
+
+            document.getElementById('result').textContent = emailTemplate;
+            document.getElementById('result-container').style.display = 'block';
+        }
+
+        function copyToClipboard() {
+            const text = document.getElementById('result').textContent;
+            navigator.clipboard.writeText(text).then(function () {
+                alert('E-postmeddelandet har kopierats till urklipp!');
+            }, function () {
+                alert('Kunde inte kopiera text. Försök att markera texten och kopiera manuellt.');
+            });
+        }
+
+        function shareEmail() {
+            const text = document.getElementById('result').textContent;
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Vasa Ventilation Bokning',
+                    text: text
+                }).then(() => {
+                    alert('E-postmeddelandet har delats!');
+                }).catch((error) => {
+                    alert('Kunde inte dela meddelandet. Error: ' + error);
+                });
+            } else {
+                alert('Dela-funktionen stöds inte på denna enhet.');
+            }
+        }
+    </script>
+</body>
+</html>
